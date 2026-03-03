@@ -221,6 +221,24 @@
 </head>
 <body>
 
+<!-- LOCK SCREEN -->
+<div id="lock-screen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:3rem 3.5rem;text-align:center;width:360px;">
+    <div style="font-size:2.5rem;margin-bottom:1rem">🔒</div>
+    <h1 style="font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;margin-bottom:.4rem;">IT Services Dashboard</h1>
+    <p style="color:var(--muted);font-size:.85rem;margin-bottom:1.8rem;">Enter password to continue</p>
+    <input id="pwd-input" type="password" placeholder="Password"
+      style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.7rem 1rem;color:var(--text);font-size:.95rem;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:.8rem;text-align:center;"/>
+    <button onclick="checkPassword()"
+      style="width:100%;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:.75rem;font-size:.9rem;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;">
+      Access Dashboard
+    </button>
+    <p id="pwd-error" style="display:none;color:var(--danger);font-size:.82rem;margin-top:.8rem;">❌ Incorrect password, try again</p>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="main-app" style="display:none">
 <nav>
   <div class="nav-logo">⚡ IT Dashboard</div>
   <div class="nav-tab active" onclick="showPage('overview')">Overview</div>
@@ -387,6 +405,24 @@
 </div>
 
 <script>
+// ─── PASSWORD ──────────────────────────────────────────────────────────────
+function checkPassword() {
+  const input = document.getElementById('pwd-input').value;
+  if (input === 'Alexander') {
+    document.getElementById('lock-screen').style.display = 'none';
+    document.getElementById('main-app').style.display = 'block';
+  } else {
+    document.getElementById('pwd-error').style.display = 'block';
+    document.getElementById('pwd-input').value = '';
+    document.getElementById('pwd-input').focus();
+  }
+}
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('pwd-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') checkPassword();
+  });
+});
+
 // ─── DATA ──────────────────────────────────────────────────────────────────
 let globalData = { services: [], users: [] };
 let barChartInst, donutChartInst, userChartInst, unitChartInst, compChartInst;
@@ -758,7 +794,7 @@ function recalcComparison() {
     ${[1,2,3,4].map(n=>{
       const v = totals[`opt${n}`];
       const isBest = v>0 && v===minVal;
-      return `<td class="${isBest?'best-val':''}">${v>0?fmtK(v)+(isBest?'🏆':''):'—'}</td>`;
+      return `<td class="${isBest?'best-val':''}">${v>0?fmtK(v)+'${isBest?' 🏆':''}':'—'}</td>`;
     }).join('')}
   `;
 
@@ -831,5 +867,6 @@ const SAMPLE_USERS = [{"email": "daniel.bello@elecnor.com.au", "services": [{"pr
   renderAll();
 })();
 </script>
+</div><!-- end main-app -->
 </body>
 </html>
