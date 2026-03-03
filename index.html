@@ -8,6 +8,24 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<script>
+function checkPassword() {
+  const input = document.getElementById('pwd-input').value;
+  if (input === 'Alexander') {
+    document.getElementById('lock-screen').style.display = 'none';
+    document.getElementById('main-app').style.display = 'block';
+  } else {
+    document.getElementById('pwd-error').style.display = 'block';
+    document.getElementById('pwd-input').value = '';
+    document.getElementById('pwd-input').focus();
+  }
+}
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('pwd-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') checkPassword();
+  });
+});
+</script>
 <style>
   :root {
     --bg: #0b0e17;
@@ -405,24 +423,6 @@
 </div>
 
 <script>
-// ─── PASSWORD ──────────────────────────────────────────────────────────────
-function checkPassword() {
-  const input = document.getElementById('pwd-input').value;
-  if (input === 'Alexander') {
-    document.getElementById('lock-screen').style.display = 'none';
-    document.getElementById('main-app').style.display = 'block';
-  } else {
-    document.getElementById('pwd-error').style.display = 'block';
-    document.getElementById('pwd-input').value = '';
-    document.getElementById('pwd-input').focus();
-  }
-}
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('pwd-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') checkPassword();
-  });
-});
-
 // ─── DATA ──────────────────────────────────────────────────────────────────
 let globalData = { services: [], users: [] };
 let barChartInst, donutChartInst, userChartInst, unitChartInst, compChartInst;
