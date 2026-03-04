@@ -678,27 +678,48 @@ function toggleUser(el) {
 
 // ─── PROVIDER COMPARISON ───────────────────────────────────────────────────
 const COMP_CATEGORIES = [
-  {key:'office', label:'Office (Microsoft / Google)', perLocation:false},
-  {key:'adobe', label:'Adobe', perLocation:false},
-  {key:'other', label:'Other Software', perLocation:false},
-  {key:'service', label:'Managed Service Fee', perLocation:false},
-  {key:'presence', label:'Presence / On-site Support', perLocation:false},
-  {key:'internet', label:'Internet', perLocation:true},
-  {key:'printer', label:'Printer / Hardware Lease', perLocation:true},
+  {key:'m365',     label:'M365 (E3 + Business)',          perLocation:false},
+  {key:'teams',    label:'Teams Calling + Phone',          perLocation:false},
+  {key:'planner',  label:'Planner / Project P3',           perLocation:false},
+  {key:'visio',    label:'Visio Plan 2',                   perLocation:false},
+  {key:'powerbi',  label:'Power BI Pro',                   perLocation:false},
+  {key:'automate', label:'Power Automate',                 perLocation:false},
+  {key:'adobe',    label:'Adobe DC Pro',                   perLocation:false},
+  {key:'service',  label:'Managed Service Fee',            perLocation:false},
+  {key:'presence', label:'Presence / On-site Support',     perLocation:false},
+  {key:'internet', label:'Internet',                       perLocation:true},
+  {key:'printer',  label:'Printer / Hardware Lease',       perLocation:true},
 ];
 
 // Pre-populate Futura values from actual data
 function getFuturaDefaults() {
   const s = globalData.services;
-  const find = (...names) => { 
-    const match = s.find(x=>names.some(n=>x.name.toLowerCase().includes(n.toLowerCase())));
-    return match ? Math.round(match.unit_cost*12) : 0;
+  // helper that looks for a single service name and returns yearly cost
+  const single = name => {
+    const match = s.find(x => x.name.toLowerCase().includes(name.toLowerCase()));
+    if (!match) return 0;
+    return Math.round(match.unit_cost * 12);
   };
+
+  // for backwards‑compatibility we keep the old finder too (unused here)
+  const find = (...names) => {
+    const matches = s.filter(x => names.some(n => x.name.toLowerCase().includes(n.toLowerCase())));
+    if (!matches.length) return 0;
+    // Sum unit costs for multi-line categories, then round
+    const total = matches.reduce((sum, m) => sum + m.unit_cost, 0);
+    return Math.round(total * 12);
+  };
+
   return {
-    office: find('365','microsoft 365'),
-    adobe: find('adobe'),
-    other: find('visio','power bi','planner','automate'),
-    service: find('managed user'),
+    // only include the E3 service now
+    m365:     single('365 e3'),
+    teams:    find('teams calling', 'teams phone'),
+    planner:  find('planner'),
+    visio:    find('visio'),
+    powerbi:  find('power bi'),
+    automate: find('automate'),
+    adobe:    find('adobe'),
+    service:  find('managed user'),
     presence: 0, internet: 0, printer: 0
   };
 }
